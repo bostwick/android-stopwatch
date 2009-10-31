@@ -19,7 +19,7 @@ public class Stopwatch extends Activity {
         super.onCreate(savedInstanceState);
         
         Log.d(TAG, "Setting members");
-        
+                
         mStopwatch = (com.redballoonsoftware.widgets.Stopwatch)findViewById(R.id.Stopwatch01);
         mStartStop = (Button)findViewById(R.id.StartStopButton);
         mResetLap = (Button)findViewById(R.id.ResetLapButton);

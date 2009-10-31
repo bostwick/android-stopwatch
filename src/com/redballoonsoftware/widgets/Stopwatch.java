@@ -1,28 +1,61 @@
 package com.redballoonsoftware.widgets;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Stopwatch extends TextView {
 	private static final String TAG = "Stopwatch";
-
-	private class CountUpTask extends TimerTask {
+	private static final int TICK_WHAT = 2;
+	
+	// in milliseconds
+	private long mStartTime;
+	private long mNow;
+	private long mNowOffset;
+	private long mDelay;
+	
+	private boolean mPaused;
+	private boolean mRunning;
+	
+	private Handler mHandler = new Handler();
+	
+	
+	private Runnable mUpdateTimeTask = new Runnable() {
+		@Override
 		public void run() {
-			if (!mIsPaused)
-				mNow += mFrequency;
+			mNow = (SystemClock.elapsedRealtime() - mStartTime) + mNowOffset;
 			updateText(mNow);
-			Log.d(TAG, "tick");
+			mHandler.postDelayed(this, mDelay);
+		}
+	};
+	
+	public void start() {
+		if ( !mRunning ) {
+			mStartTime = SystemClock.elapsedRealtime();
+			mRunning = true;
+			mHandler.removeCallbacks(mUpdateTimeTask);
+			mHandler.postDelayed(mUpdateTimeTask, mDelay);
 		}
 	}
 	
-	private long mNow;		// in milliseconds
-	private boolean mIsPaused; 
-	private boolean mIsStarted;
-	private Timer mTimer;
-	private long mFrequency;
+	
+	
+	public void stop() {
+		mRunning = false;
+		mHandler.removeCallbacks(mUpdateTimeTask);
+	}
+	
+	public void reset() {
+		mNow = 0;
+		mRunning = false;
+	}
+
 	
 	public Stopwatch(Context context) {
 		this(context, null, 0);
@@ -38,39 +71,42 @@ public class Stopwatch extends TextView {
 	}
 
 	private void init() {
-		mFrequency = 10; 	// Update every hundredth of a second
+		mDelay = 10; 	// Update every hundredth of a second
 		reset();
 		updateText(mNow);
 	}
 	
+	/* 
 	public void reset() {
-		mTimer = new Timer();
+		// mTimer = new Timer();
 		mNow = 0;
+		mNowOffset = 0;
 		mIsPaused = true;
 		mIsStarted = false;
 	}
 	
 	public void start() {
 		Log.d(TAG, "start");
-		if ( mIsStarted ) {
-			mIsPaused = false;
-		} else {
-			reset();
-			mTimer.scheduleAtFixedRate(new CountUpTask(), 0, mFrequency);
-		}
+		mIsPaused = false;
+		mIsStarted = true;
+		mStart = SystemClock.elapsedRealtime();
+		mHandler.removeCallbacks(mUpdateTimeTask);
+		mHandler.postDelayed(mUpdateTimeTask, mDelay);
 	}
 	
 	public void stop() {
 		Log.d(TAG, "stop");
-		mIsPaused = true;
+		mPaused = true;
+		mNowOffset = mNow;
 	}
-
+	*/
+	
 	public boolean isStarted() {
-		return mIsStarted;
+		return mRunning;
 	}
 	
 	public boolean isPaused() {
-		return mIsPaused;
+		return mPaused;
 	}
 	
 	private synchronized void updateText(long now) {
