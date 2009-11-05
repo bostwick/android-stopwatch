@@ -32,11 +32,24 @@ public class Stopwatch extends Activity {
     
     public void onStartStopButtonClick(View v) {
     	Log.d(TAG, "onStartStopButtonClick called");
-    	mStopwatch.start();
+    	if (mStopwatch.isPaused()) {
+    	    mStartStop.setText("Stop");
+    	    mResetLap.setText("Lap");
+    	    mStopwatch.start();
+	    } else {
+	        mStartStop.setText("Start");
+	        mResetLap.setText("Reset");
+	        mStopwatch.stop();
+	    }
     }
     
     public void onResetLapButtonClick(View v) {
     	Log.d(TAG, "onResetLapButtonClick called");
+    	if (mStopwatch.isPaused()) {    // currently says "Reset"
+    	    mStopwatch.reset();
+    	} else {
+            Log.d(TAG, mStopwatch.currentFormattedTime());
+    	}
     }
     
 }
