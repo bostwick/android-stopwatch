@@ -3,7 +3,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:gravity="center"
+  android:gravity="center_horizontal"
   android:orientation="vertical">
 	<com.redballoonsoftware.widgets.Stopwatch 
 		android:id="@+id/Stopwatch01"
@@ -15,25 +15,37 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:gravity="center">
-	<Button 
-		android:text="Start" 
-		android:id="@+id/StartStopButton" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:textSize="36sp"
-		android:paddingLeft="24dip"
-		android:paddingRight="24dip"
-		android:minWidth="150dip"
-		android:onClick="onStartStopButtonClick"/>
-	<Button 
-		android:text="Reset" 
-		android:id="@+id/ResetLapButton" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:textSize="36sp"
-		android:paddingLeft="24dip"
-		android:paddingRight="24dip"
-		android:minWidth="150dip"
-		android:onClick="onResetLapButtonClick"/>
+		<Button 
+			android:text="Start" 
+			android:id="@+id/StartStopButton" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:textSize="36sp"
+			android:paddingLeft="24dip"
+			android:paddingRight="24dip"
+			android:minWidth="150dip"
+			android:onClick="onStartStopButtonClick"/>
+		<Button 
+			android:text="Reset" 
+			android:id="@+id/ResetLapButton" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:textSize="36sp"
+			android:paddingLeft="24dip"
+			android:paddingRight="24dip"
+			android:minWidth="150dip"
+			android:onClick="onResetLapButtonClick"/>
 	</LinearLayout>
+	
+	<ListView
+		android:id="@+id/android:list"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"/>
+	<TextView
+		android:id="@+id/android:empty"
+		android:text=""
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_horizontal"/>
+		
 </LinearLayout>
