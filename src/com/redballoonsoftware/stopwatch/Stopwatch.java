@@ -24,14 +24,14 @@ public class Stopwatch {
 	/**
 	 * What is the stopwatch doing?
 	 */
-	private enum StopwatchState { PAUSED, RUNNING };
+	public enum State { PAUSED, RUNNING };
 	
 	private GetTime m_time;
 	private long m_startTime;
 	private long m_stopTime;
 	private long m_pauseOffset;
 	private List<Long> m_laps = new ArrayList<Long>();
-	private StopwatchState m_state;
+	private State m_state;
 	
 	public Stopwatch() {
 		m_time = SystemTime;
@@ -47,11 +47,11 @@ public class Stopwatch {
 	 * does nothing. 
 	 */
 	public void start() {
-		if ( m_state == StopwatchState.PAUSED ) {
+		if ( m_state == State.PAUSED ) {
 			m_pauseOffset = getElapsedTime();
 			m_stopTime = 0;
 			m_startTime = m_time.now();
-			m_state = StopwatchState.RUNNING;
+			m_state = State.RUNNING;
 		}
 	}
 
@@ -59,9 +59,9 @@ public class Stopwatch {
 	 * Pause the stopwatch. If the stopwatch is already running, do nothing.
 	 */
 	public void pause() {
-		if ( m_state == StopwatchState.RUNNING ) {
+		if ( m_state == State.RUNNING ) {
 			m_stopTime = m_time.now();
-			m_state = StopwatchState.PAUSED;
+			m_state = State.PAUSED;
 		}
 	}
 
@@ -69,7 +69,7 @@ public class Stopwatch {
 	 * Reset the stopwatch to the initial state, clearing all stored times. 
 	 */
 	public void reset() {
-		m_state = StopwatchState.PAUSED;
+		m_state = State.PAUSED;
 		m_startTime 	= 0;
 		m_stopTime 		= 0;
 		m_pauseOffset 	= 0;
@@ -87,7 +87,7 @@ public class Stopwatch {
 	 * @return The amount of time recorded by the stopwatch, in milliseconds
 	 */
 	public long getElapsedTime() {
-		if ( m_state == StopwatchState.PAUSED ) {
+		if ( m_state == State.PAUSED ) {
 			return (m_stopTime - m_startTime) + m_pauseOffset;
 		} else {
 			return (m_time.now() - m_startTime) + m_pauseOffset;
@@ -107,6 +107,6 @@ public class Stopwatch {
 	 * 		   time, false otherwise.
 	 */
 	public boolean isRunning() {
-		return (m_state == StopwatchState.RUNNING);
+		return (m_state == State.RUNNING);
 	}
 }

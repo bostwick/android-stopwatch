@@ -45,6 +45,7 @@ public class StopwatchActivity extends ListActivity {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			m_stopwatchService = ((StopwatchService.LocalBinder)service).getService();
+			showCorrectButtons();
 		}
 
 		@Override
@@ -73,7 +74,7 @@ public class StopwatchActivity extends ListActivity {
 
         startService(new Intent(this, StopwatchService.class));
         bindStopwatchService();
-            
+        
         m_elapsedTime = (TextView)findViewById(R.id.ElapsedTime);
         
         m_start = (Button)findViewById(R.id.StartButton);
@@ -85,14 +86,28 @@ public class StopwatchActivity extends ListActivity {
 
         mHandler.sendMessageDelayed(Message.obtain(mHandler, TICK_WHAT), mFrequency);
     }
-
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindStopwatchService();
     }
     
+    private void showCorrectButtons() {
+    	Log.d(TAG, "showCorrectButtons");
+    	
+    	if ( m_stopwatchService != null ) {
+    		if ( m_stopwatchService.isStopwatchRunning() ) {
+    			showPauseLapButtons();
+    		} else {
+    			showStartResetButtons();
+    		}
+    	}
+    }
+    
     private void showPauseLapButtons() {
+    	Log.d(TAG, "showPauseLapButtons");
+    	
     	m_start.setVisibility(View.GONE);
     	m_reset.setVisibility(View.GONE);
     	m_pause.setVisibility(View.VISIBLE);
@@ -100,6 +115,8 @@ public class StopwatchActivity extends ListActivity {
     }
     
     private void showStartResetButtons() {
+    	Log.d(TAG, "showStartResetButtons");
+
     	m_start.setVisibility(View.VISIBLE);
     	m_reset.setVisibility(View.VISIBLE);
     	m_pause.setVisibility(View.GONE);
@@ -132,7 +149,6 @@ public class StopwatchActivity extends ListActivity {
     	m_stopwatchService.lap();
     	
     	m_lapList.insert(m_stopwatchService.getFormattedElapsedTime(), 0);
-        //((ArrayAdapter<String>)mLapList.getAdapter()).insert(mStopwatch.currentFormattedTime(), 0);
     }
     
     public void updateElapsedTime() {
