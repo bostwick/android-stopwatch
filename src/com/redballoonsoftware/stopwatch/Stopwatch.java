@@ -1,64 +1,112 @@
 package com.redballoonsoftware.stopwatch;
 
-import android.app.Activity;
-import android.app.ListActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Stopwatch extends ListActivity {
-	private static String TAG = "StopwatchActivity";
-	private com.redballoonsoftware.widgets.Stopwatch mStopwatch;
+public class Stopwatch {
 	
-	private Button mStartStop;
-	private Button mResetLap;
-	private ListView mLapList; 
+	/**
+	 * Implements a method that returns the current time, in milliseconds.
+	 * Used for testing
+	 */
+	public interface GetTime {
+		public long now();
+	}
 	
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        Log.d(TAG, "Setting View");
-        
-        setContentView(R.layout.stopwatch);
-        
-        Log.d(TAG, "Setting members");
-                
-        mStopwatch = (com.redballoonsoftware.widgets.Stopwatch)findViewById(R.id.Stopwatch01);
-        mStartStop = (Button)findViewById(R.id.StartStopButton);
-        mResetLap = (Button)findViewById(R.id.ResetLapButton);
-        mLapList = getListView();
+	/**
+	 * Default way to get time. Just use the system clock.
+	 */
+	private GetTime SystemTime = new GetTime() {
+		@Override
+		public long now() {	return System.currentTimeMillis(); }
+	};
+	
+	/**
+	 * What is the stopwatch doing?
+	 */
+	private enum StopwatchState { PAUSED, RUNNING };
+	
+	private GetTime m_time;
+	private long m_startTime;
+	private long m_stopTime;
+	private long m_pauseOffset;
+	private List<Long> m_laps = new ArrayList<Long>();
+	private StopwatchState m_state;
+	
+	public Stopwatch() {
+		m_time = SystemTime;
+		reset();
+	}
+	public Stopwatch(GetTime time) {
+		m_time = time;
+		reset();
+	}
+	
+	/**
+	 * Start the stopwatch running. If the stopwatch is already running, this
+	 * does nothing. 
+	 */
+	public void start() {
+		if ( m_state == StopwatchState.PAUSED ) {
+			m_pauseOffset = getElapsedTime();
+			m_stopTime = 0;
+			m_startTime = m_time.now();
+			m_state = StopwatchState.RUNNING;
+		}
+	}
 
-        setListAdapter(new ArrayAdapter<String>(this, R.layout.laps_row));
-    }
-    
-    
-    public void onStartStopButtonClick(View v) {
-    	Log.d(TAG, "onStartStopButtonClick called");
-    	if (mStopwatch.isPaused()) {
-    	    mStartStop.setText("Stop");
-    	    mResetLap.setText("Lap");
-    	    mStopwatch.start();
-	    } else {
-	        mStartStop.setText("Start");
-	        mResetLap.setText("Reset");
-	        mStopwatch.stop();
-	    }
-    }
-    
-    public void onResetLapButtonClick(View v) {
-    	Log.d(TAG, "onResetLapButtonClick called");
-    	if (mStopwatch.isPaused()) {    // currently says "Reset"
-    	    mStopwatch.reset();
-    	    ((ArrayAdapter<String>)getListAdapter()).clear();
-    	} else {
-            Log.d(TAG, mStopwatch.currentFormattedTime());
-            ((ArrayAdapter<String>)mLapList.getAdapter()).insert(mStopwatch.currentFormattedTime(), 0);
-    	}
-    }
-    
+	/***
+	 * Pause the stopwatch. If the stopwatch is already running, do nothing.
+	 */
+	public void pause() {
+		if ( m_state == StopwatchState.RUNNING ) {
+			m_stopTime = m_time.now();
+			m_state = StopwatchState.PAUSED;
+		}
+	}
+
+	/**
+	 * Reset the stopwatch to the initial state, clearing all stored times. 
+	 */
+	public void reset() {
+		m_state = StopwatchState.PAUSED;
+		m_startTime 	= 0;
+		m_stopTime 		= 0;
+		m_pauseOffset 	= 0;
+		m_laps.clear();
+	}
+	
+	/**
+	 * Record a lap at the current time.
+	 */
+	public void lap() {
+		m_laps.add(getElapsedTime());
+	}
+	
+	/***
+	 * @return The amount of time recorded by the stopwatch, in milliseconds
+	 */
+	public long getElapsedTime() {
+		if ( m_state == StopwatchState.PAUSED ) {
+			return (m_stopTime - m_startTime) + m_pauseOffset;
+		} else {
+			return (m_time.now() - m_startTime) + m_pauseOffset;
+		}
+	}
+	
+	/**
+	 * @return A list of the laps recorded. Each lap is given as a millisecond
+	 * 		   value from when the stopwatch began running. 
+	 */
+	public List<Long> getLaps() {
+		return m_laps;
+	}
+	
+	/**
+	 * @return true if the stopwatch is currently running and recording
+	 * 		   time, false otherwise.
+	 */
+	public boolean isRunning() {
+		return (m_state == StopwatchState.RUNNING);
+	}
 }
