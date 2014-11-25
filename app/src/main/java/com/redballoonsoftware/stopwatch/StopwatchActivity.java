@@ -1,6 +1,5 @@
 package com.redballoonsoftware.stopwatch;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,8 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class StopwatchActivity extends ListActivity {
@@ -27,7 +25,10 @@ public class StopwatchActivity extends ListActivity {
 	private Button m_pause;
 	private Button m_reset;
 	private Button m_lap;
+    private Switch m_sound_switch;
 	private ArrayAdapter<String> m_lapList;
+    private StopwatchAudio m_stopWatchAudio;
+    boolean soundOn;
 	
 	// Timer to update the elapsedTime display
     private final long mFrequency = 100;    // milliseconds
@@ -68,6 +69,8 @@ public class StopwatchActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        m_stopWatchAudio = new StopwatchAudio();
         
         setContentView(R.layout.stopwatch);
         setListAdapter(new ArrayAdapter<String>(this, R.layout.laps_row));
@@ -76,7 +79,9 @@ public class StopwatchActivity extends ListActivity {
         bindStopwatchService();
         
         m_elapsedTime = (TextView)findViewById(R.id.ElapsedTime);
-        
+
+        m_sound_switch = (Switch)findViewById(R.id.sound_switch);
+
         m_start = (Button)findViewById(R.id.StartButton);
         m_pause = (Button)findViewById(R.id.PauseButton);
         m_reset = (Button)findViewById(R.id.ResetButton);
@@ -122,10 +127,15 @@ public class StopwatchActivity extends ListActivity {
     	m_pause.setVisibility(View.GONE);
     	m_lap.setVisibility(View.GONE);
     }
+
+    public void onAudioSwitchClicked (View v) {
+        soundOn = ((Switch)v).isChecked();
+    }
     
     public void onStartClicked(View v) {
     	Log.d(TAG, "start button clicked");
     	m_stopwatchService.start();
+        if (soundOn) m_stopWatchAudio.playBeep(this, R.raw.beep);
     	
     	showPauseLapButtons();
     }
@@ -133,6 +143,7 @@ public class StopwatchActivity extends ListActivity {
     public void onPauseClicked(View v) {
     	Log.d(TAG, "pause button clicked");
     	m_stopwatchService.pause();
+        if (soundOn) m_stopWatchAudio.playBeep(this, R.raw.beep);
     	
     	showStartResetButtons();
     }
@@ -140,6 +151,7 @@ public class StopwatchActivity extends ListActivity {
     public void onResetClicked(View v) {
     	Log.d(TAG, "reset button clicked");
     	m_stopwatchService.reset();
+        if (soundOn) m_stopWatchAudio.playBeep(this, R.raw.beep);
     	
     	m_lapList.clear();
     }
@@ -147,6 +159,7 @@ public class StopwatchActivity extends ListActivity {
     public void onLapClicked(View v) {
     	Log.d(TAG, "lap button clicked");
     	m_stopwatchService.lap();
+        if (soundOn) m_stopWatchAudio.playBeep(this, R.raw.bip);
     	
     	m_lapList.insert(m_stopwatchService.getFormattedElapsedTime(), 0);
     }
