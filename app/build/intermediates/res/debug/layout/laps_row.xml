@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView android:id="@+id/text1" xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:textSize="48sp"
-    android:gravity="right"
-    android:paddingRight="24dip"/>
-<!-- From: file:/Users/Borham/Desktop/Github/android-stopwatch1/app/src/main/res/layout/laps_row.xml -->
