@@ -1,0 +1,19 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "21.1.1"
+
+    defaultConfig {
+        applicationId "com.redballoonsoftware.stopwatch"
+        minSdkVersion 5
+        targetSdkVersion 5
+    }
+
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
