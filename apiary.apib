@@ -1,0 +1,55 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# messinaround
+
+Polls is a simple API allowing consumers to view polls and vote in them.
+
+## My Model [/header]
+
+    + Model
+            poobutt: yes
+            
+## Create VHR Alert [/REST/VehicleHealthReportServiceV5_0/CreateVHRAlert]
+
+This service operation retains a VHR alert for the purpose of storing ad-hoc VHR email preferences.
+
+### Retrieve a VHR Alert [POST]
+
++ Request
+
+    + Headers
+    
+            poobutt: yes
+            
+    + Body
+
+            {
+                "context":{
+                  "SourceName":"WEB",
+                  "TransactionId":"00XYZ000US000001234512345123451234512345",
+                  "Timestamp":"2014-09-19T22:14:02.001Z",
+                  "Organization":"{ORG}",
+                  "Region":"{Region}",
+                  "ApplicationName":"CWP"
+                },
+                "Data":{
+                    "accountId":"ACC12345",
+                    "vin":"VIN12345",
+                    "tcuId":"004402000059513",
+                    "alertPreference":{
+                     "alertByEmail":"true",
+                     "emails":[
+                        {
+                           "emailOrSmsTn":"abc@gmail.com",
+                           "enable":"true",
+                           "aliasName":"work"
+                        }
+                     ],
+                     "alertBySms":"false"
+                    },
+                    "alertRequestType":"ONETIME"
+               }
+            }
+            
++ Response 200
