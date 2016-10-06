@@ -10,6 +10,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class StopwatchService extends Service {
@@ -36,6 +37,8 @@ public class StopwatchService extends Service {
         	sendMessageDelayed(Message.obtain(this, TICK_WHAT), mFrequency);
         }
     };
+
+	private NotificationCompat.Builder mBuilder;
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -82,12 +85,23 @@ public class StopwatchService extends Service {
     	CharSequence contentTitle = "Stopwatch";
     	CharSequence contentText = getFormattedElapsedTime();
 
-    	Intent notificationIntent = new Intent(this, StopwatchActivity.class);
-    	PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+//    	Intent notificationIntent = new Intent(this, StopwatchActivity.class);
+//    	PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+//
+//    	// the next two lines initialize the Notification, using the configurations above
+//    	m_notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+//		m_notificationMgr.notify(NOTIFICATION_ID, m_notification);
 
-    	// the next two lines initialize the Notification, using the configurations above
-    	m_notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-		m_notificationMgr.notify(NOTIFICATION_ID, m_notification);
+		NotificationManager mNotificationManager =
+				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+		mBuilder = new NotificationCompat.Builder(this)
+				.setSmallIcon(R.drawable.icon)
+				.setContentTitle("Stopwatch")
+				.setContentText(contentText);
+
+		// mId allows you to update the notification later on.
+		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
     
     public void showNotification() {
