@@ -1,0 +1,25 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    compile "joda-time:joda-time:2.9.9"
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+}
